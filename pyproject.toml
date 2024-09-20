@@ -1,0 +1,15 @@
+[project]
+name = "hello-dagger-fastapi-rye"
+version = "0.1.0"
+description = "Add your description here"
+authors = [
+    { name = "Patrick Paulino", email = "pmpaulino@gmail.com" }
+]
+dependencies = []
+readme = "README.md"
+requires-python = ">= 3.8"
+
+[tool.rye]
+managed = true
+virtual = true
+dev-dependencies = []
