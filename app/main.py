@@ -1,4 +1,4 @@
-# app/__init__.py
+# app/main.py
 from typing import Union
 
 from fastapi import FastAPI
