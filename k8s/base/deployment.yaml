@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-app
+  labels:
+    app: fastapi-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fastapi-app
+  template:
+    metadata:
+      labels:
+        app: fastapi-app
+    spec:
+      containers:
+        - name: fastapi-app
+          image: ttl.sh/myapp-72865269@sha256:16cbbfb412619f664a13aa9854b5b9258da706e4f6d420aa3fbdcd1c9a5688f9
+          ports:
+            - containerPort: 80
