@@ -26,6 +26,7 @@ from typing import Annotated
 import dagger
 from dagger import Doc, dag, function, object_type
 
+import random
 
 @object_type
 class HelloDaggerFastapiRye:
@@ -46,7 +47,11 @@ class HelloDaggerFastapiRye:
 
     @function
     async def test(self, source: dagger.Directory) -> str:
-        """Return the result of running unit tests"""
+        """
+            Return the result of running unit tests
+
+            dagger call test --source=.
+        """
         # Await the build_env function to get the container
         container = await self.build_env(source)
         # Now you can call .with_exec() on the container
@@ -54,7 +59,11 @@ class HelloDaggerFastapiRye:
 
     @function
     def build(self, source: dagger.Directory) -> dagger.Container:
-        """Build a production image with only requirements.lock and app directory"""
+        """
+            Build a production image with only requirements.lock and app directory
+        
+            dagger call test --source=.
+        """
         return (
             dag.container()
             .from_("python:3.12-slim")
@@ -71,7 +80,11 @@ class HelloDaggerFastapiRye:
 
     @function
     async def publish(self, source: dagger.Directory) -> str:
-        """Publish the application container after building and testing it on-the-fly"""
+        """
+            Publish the application container after building and testing it on-the-fly
+        
+            dagger call publish --source=.
+        """
         # Call Dagger Function to run unit tests
         await self.test(source)
         # Call Dagger Function to build the application image
@@ -85,9 +98,9 @@ class HelloDaggerFastapiRye:
         self, directory_arg: dagger.Directory, env: str | None = "nonprod"
     ) -> dagger.File:
         """
-        dagger -vvv call \
-        kustomize --directory_arg=k8s \
-        export --path k8s_test/nonoprod.yaml
+            dagger -vvv call \
+            kustomize --directory_arg=k8s \
+            export --path k8s_test/nonoprod.yaml
         """
         return (
             dag.container()
