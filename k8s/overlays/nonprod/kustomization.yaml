@@ -4,3 +4,7 @@ resources:
 - ../../base
 patches:
 - path: deployment-patch.yaml
+images:
+- name: fastpi-app:latest
+  newName: ttl.sh/fastapi-app-72865269
+  newTag: "latest"

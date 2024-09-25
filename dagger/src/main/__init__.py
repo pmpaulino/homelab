@@ -90,7 +90,7 @@ class HelloDaggerFastapiRye:
         # Call Dagger Function to build the application image
         # Publish the image to ttl.sh
         return await self.build(source).publish(
-            f"ttl.sh/myapp-{random.randrange(10 ** 8)}:latest"
+            f"ttl.sh/fastapi-app-{random.randrange(10 ** 8)}:latest"
         )
 
     @function

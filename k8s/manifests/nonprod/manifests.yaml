@@ -31,7 +31,7 @@ spec:
       - env:
         - name: ENVIRONMENT
           value: nonprod
-        image: ttl.sh/myapp-72865269@sha256:16cbbfb412619f664a13aa9854b5b9258da706e4f6d420aa3fbdcd1c9a5688f9
+        image: ttl.sh/fastapi-app-72865269:latest
         name: fastapi-app
         ports:
         - containerPort: 80
