@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: fastapi-app
-          image: fastpi-app:latest
+          image: fastapi-app:latest
           ports:
             - containerPort: 80
