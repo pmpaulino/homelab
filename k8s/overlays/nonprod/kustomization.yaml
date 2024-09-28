@@ -6,5 +6,5 @@ patches:
 - path: deployment-patch.yaml
 images:
 - name: fastapi-app:latest
-  newName: ttl.sh/fastapi-app-9072697
+  newName: ttl.sh/fastapi-app-43202440
   newTag: latest
