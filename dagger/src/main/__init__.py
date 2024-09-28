@@ -21,17 +21,15 @@ if appropriate. All modules should have a short description.
 # For example, to import from src/main/main.py:
 # >>> from .main import HelloDaggerFastapiRye as HelloDaggerFastapiRye
 
-from typing import Annotated
-
 import dagger
-from dagger import Doc, dag, function, object_type
+from dagger import dag, function, object_type
 
 import random
 
+
 @object_type
 class HelloDaggerFastapiRye:
-    @function
-    async def build_env(self, source: dagger.Directory) -> dagger.Container:
+    async def build_local_env(self, source: dagger.Directory) -> dagger.Container:
         """Build a ready-to-use development environment"""
         return (
             dag.container()
@@ -45,24 +43,11 @@ class HelloDaggerFastapiRye:
             .with_exec(["pip", "install", "-r", "requirements-dev.lock"])
         )
 
-    @function
-    async def test(self, source: dagger.Directory) -> str:
+    def build_env(self, source: dagger.Directory) -> dagger.Container:
         """
-            Return the result of running unit tests
+        Build a production image with only requirements.lock and app directory
 
-            dagger call test --source=.
-        """
-        # Await the build_env function to get the container
-        container = await self.build_env(source)
-        # Now you can call .with_exec() on the container
-        return await container.with_exec(["pytest"]).stdout()
-
-    @function
-    def build(self, source: dagger.Directory) -> dagger.Container:
-        """
-            Build a production image with only requirements.lock and app directory
-        
-            dagger call test --source=.
+        dagger call test --source=.
         """
         return (
             dag.container()
@@ -79,34 +64,54 @@ class HelloDaggerFastapiRye:
         )
 
     @function
-    async def publish(self, source: dagger.Directory) -> str:
+    async def test(self, source: dagger.Directory) -> str:
         """
-            Publish the application container after building and testing it on-the-fly
-        
-            dagger call publish --source=.
+        Return the result of running unit tests
+
+        dagger call test --source=.
         """
-        # Call Dagger Function to run unit tests
-        await self.test(source)
-        # Call Dagger Function to build the application image
-        # Publish the image to ttl.sh
-        return await self.build(source).publish(
-            f"ttl.sh/fastapi-app-{random.randrange(10 ** 8)}:latest"
-        )
+        # Await the build_env function to get the container
+        container = await self.build_local_env(source)
+        # Now you can call .with_exec() on the container
+        return await container.with_exec(["pytest"]).stdout()
+
 
     @function
-    def kustomize(
-        self, directory_arg: dagger.Directory, env: str | None = "nonprod"
-    ) -> dagger.File:
+    async def publish(self, source: dagger.Directory) -> str:
         """
-            dagger -vvv call \
-            kustomize --directory_arg=k8s \
-            export --path k8s_test/nonoprod.yaml
+        Publish the application container after building and testing it on-the-fly
+
+        dagger call publish --source=.
         """
+        self.test(source)
+        image_full_name = f"ttl.sh/fastapi-app-{random.randrange(10 ** 8)}:latest"
+        return await self.build_env(source).publish(image_full_name)
+
+    @function
+    async def kustomize(
+        self,
+        directory_arg: dagger.Directory,
+        image_name: str,
+        image_tag: str,
+        env: str | None = "nonprod",
+    ) -> dagger.Directory:
+        """Update the kustomization.yaml file with the new image URL"""
+
         return (
             dag.container()
             .from_("registry.k8s.io/kustomize/kustomize:v5.0.0")
             .with_mounted_directory("/mnt", directory_arg)
-            .with_workdir("/mnt")
+            .with_workdir(f"/mnt/k8s/overlays/{env}")
+            .with_exec(
+                [
+                    "kustomize",
+                    "edit",
+                    "set",
+                    "image",
+                    f"fastapi-app:latest={image_name}:{image_tag}",
+                ]
+            )
+            .with_workdir("/mnt/k8s")
             .with_exec(
                 [
                     "kustomize",
@@ -116,28 +121,20 @@ class HelloDaggerFastapiRye:
                     f"manifests/{env}/manifests.yaml",
                 ]
             )
-            .file(f"/mnt/manifests/{env}/manifests.yaml")
+            .directory("/mnt/k8s")
         )
 
-    # TODO: Take in image name and run kustomize
-    # @function
-    # def kustomize(self, image_full_name: str, source: dagger.Directory) -> str:
-    #     """Update the kustomization.yaml file with the new image URL"""
-    #     try:
-    #         # Extract the image name and tag
-    #         image_name, image_tag = image_full_name.split('@')[0], image_full_name.split(':')[-1]
+    @function
+    async def build_and_promote(
+        self, directory_arg: dagger.Directory, env: str | None = "nonprod"
+    ) -> dagger.Directory:
+        """Update the kustomization.yaml file with the new image URL"""
 
-    #         # Load the kustomization.yaml file
-    #         with open("k8s/base/kustomization.yaml", "r") as file:
-    #             kustomization = yaml.safe_load(file)
+        # Publish the new image
+        image_full_name = await self.publish(directory_arg)
 
-    #         # Update the image details
-    #         kustomization['images'][0]['newName'] = image_name
-    #         kustomization['images'][0]['newTag'] = image_tag
+        # Extract the image name and tag
+        image_name, image_tag = image_full_name.split("@")[0].split(":")
 
-    #         # Write the updated kustomization.yaml file
-    #         with open("k8s/base/kustomization.yaml", "w") as file:
-    #             yaml.safe_dump(kustomization, file)
-
-    #     except Exception as e:
-    #         print(f"Failed to update kustomization.yaml: {e}")
+        # Update the kustomization.yaml file with the new image URL
+        return await self.kustomize(directory_arg, image_name, image_tag, env)
