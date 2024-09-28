@@ -44,11 +44,7 @@ class HelloDaggerFastapiRye:
         )
 
     def build_env(self, source: dagger.Directory) -> dagger.Container:
-        """
-        Build a production image with only requirements.lock and app directory
-
-        dagger call test --source=.
-        """
+        """Build a production image with only requirements.lock and app directory"""
         return (
             dag.container()
             .from_("python:3.12-slim")
@@ -95,7 +91,11 @@ class HelloDaggerFastapiRye:
         image_tag: str,
         env: str | None = "nonprod",
     ) -> dagger.Directory:
-        """Update the kustomization.yaml file with the new image URL"""
+        """
+        Update the kustomization.yaml file with the new image URL
+        
+        dagger call kustomize --directory_arg=k8s --source=. --image_name=image_name --image_tag=v0.0.1 export --path k8s_test/
+        """
 
         return (
             dag.container()
@@ -128,7 +128,11 @@ class HelloDaggerFastapiRye:
     async def build_and_promote(
         self, directory_arg: dagger.Directory, env: str | None = "nonprod"
     ) -> dagger.Directory:
-        """Update the kustomization.yaml file with the new image URL"""
+        """
+        Update the kustomization.yaml file with the new image URL
+        
+        dagger call build-and-promote --directory_arg=. export --path k8s/
+        """
 
         # Publish the new image
         image_full_name = await self.publish(directory_arg)
