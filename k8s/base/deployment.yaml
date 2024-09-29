@@ -9,6 +9,7 @@ metadata:
     app.kubernetes.io/name: unifi
     app.kubernetes.io/instance: unifi
     app.kubernetes.io/version: "v8.4.62"
+    link.argocd.argoproj.io/external-link: https://unifi.lemur-lake.ts.net/
 spec:
   replicas: 1
   strategy:
