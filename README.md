@@ -3,8 +3,7 @@
 This repository contains the ArgoCD applications for my homelab.
 
 ```shell
-# There is a better way to share this credential via a credential template
-argocd repo add git@github.com:pmpaulino/homelab-argo-apps.git \
+argocd repocreds add ssh://git@github.com/ \
   --ssh-private-key-path <SSH_PRIVATE_KEY_PATH>
 
 argocd app create app-of-apps \
