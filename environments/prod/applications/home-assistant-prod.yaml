@@ -1,19 +1,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: app-of-apps
+  name: home-assistant-prod
   namespace: argocd
 spec:
   project: default
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: default
   source:
     repoURL: 'git@github.com:pmpaulino/homelab-argo-apps.git'
     targetRevision: main
-    path: environments
-    directory:
-      recurse: true
+    path: 'apps/home-assistant/overlays/prod'
+    kustomize:
+      # Optional Kustomize settings
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: home-assistant-prod
   syncPolicy:
     automated:
       prune: true

@@ -1,0 +1,14 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: home-assistant
+spec:
+  replicas: 3
+  template:
+    spec:
+      containers:
+        - name: home-assistant
+          image: your-docker-registry/home-assistant:prod
+          env:
+            - name: ENV
+              value: "prod"

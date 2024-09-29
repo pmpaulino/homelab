@@ -2,8 +2,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: home-assistant
+  labels:
+    app: home-assistant
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: home-assistant
@@ -14,4 +16,6 @@ spec:
     spec:
       containers:
         - name: home-assistant
-          image: myregistry/home-assistantatest
+          image: your-docker-registry/home-assistant:latest
+          ports:
+            - containerPort: 80

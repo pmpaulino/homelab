@@ -2,8 +2,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: unifi
+  labels:
+    app: unifi
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: unifi
@@ -14,4 +16,6 @@ spec:
     spec:
       containers:
         - name: unifi
-          image: myregistry/unifiatest
+          image: your-docker-registry/unifi:latest
+          ports:
+            - containerPort: 80

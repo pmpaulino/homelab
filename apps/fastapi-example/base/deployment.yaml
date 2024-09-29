@@ -2,8 +2,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: fastapi-example
+  labels:
+    app: fastapi-example
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: fastapi-example
@@ -14,4 +16,6 @@ spec:
     spec:
       containers:
         - name: fastapi-example
-          image: nginx
+          image: nginx:latest
+          ports:
+            - containerPort: 80

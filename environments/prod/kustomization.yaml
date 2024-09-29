@@ -1,0 +1,4 @@
+resources:
+  - applications/fastapi-example-prod.yaml
+  - applications/unifi-prod.yaml
+  - applications/home-assistant-prod.yaml

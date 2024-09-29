@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: home-assistant-nonprod
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'git@github.com:pmpaulino/homelab-argo-apps.git'
+    targetRevision: main
+    path: 'apps/home-assistant/overlays/nonprod'
+    kustomize:
+      # Optional Kustomize settings
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: home-assistant-nonprod
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

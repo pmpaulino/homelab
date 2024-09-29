@@ -1,7 +1,0 @@
-namespace: pi
-resources:
-  - ../../base
-namePrefix: pi-
-images:
-  - name: myregistry/home-assistant
-    newTag: pi
