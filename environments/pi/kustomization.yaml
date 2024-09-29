@@ -1,4 +1,4 @@
 resources:
-  - ../../apps/unifi/overlays/pi
-  - ../../apps/home-assistant/overlays/pi
+  # - ../../apps/unifi/overlays/pi
+  # - ../../apps/home-assistant/overlays/pi
   - ../../apps/fastapi-example/overlays/pi
