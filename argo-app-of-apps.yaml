@@ -9,8 +9,8 @@ spec:
     server: https://kubernetes.default.svc
     namespace: default
   source:
-    repoURL: 'https://github.com/pmpaulino/homelab-argo-apps.git'  # Replace with your repo URL
-    targetRevision: HEAD
+    repoURL: 'git@github.com:pmpaulino/homelab-argo-apps.git'
+    targetRevision: main
     path: environments
     directory:
       recurse: true
