@@ -1,0 +1,21 @@
+---
+# Source: unifi/templates/gui-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: unifi-gui
+  labels:
+    helm.sh/chart: unifi-1.10.8
+    app.kubernetes.io/name: unifi
+    app.kubernetes.io/instance: unifi
+    app.kubernetes.io/version: "v8.4.62"
+spec:
+  type: ClusterIP
+  ports:
+  - name: https
+    port: 8443
+    protocol: TCP
+    targetPort: https
+  selector:
+    app.kubernetes.io/name: unifi
+    app.kubernetes.io/instance: unifi

@@ -1,0 +1,21 @@
+---
+# Source: unifi/templates/speedtest-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: unifi-speedtest
+  labels:
+    helm.sh/chart: unifi-1.10.8
+    app.kubernetes.io/name: unifi
+    app.kubernetes.io/instance: unifi
+    app.kubernetes.io/version: "v8.4.62"
+spec:
+  type: ClusterIP
+  ports:
+  - port: 6789
+    targetPort: speedtest
+    protocol: TCP
+    name: speedtest
+  selector:
+    app.kubernetes.io/name: unifi
+    app.kubernetes.io/instance: unifi
