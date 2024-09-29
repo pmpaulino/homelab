@@ -1,4 +1,4 @@
 resources:
   - ../../apps/fastapi-example/base/
-  # - ../../apps/unifi/base/
+  - ../../apps/unifi/base/
   # - ../../apps/home-assistant/base/

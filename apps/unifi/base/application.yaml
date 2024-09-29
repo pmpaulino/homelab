@@ -1,17 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: fastapi-example
+  name: unifi
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: 'git@github.com:pmpaulino/hello-dagger-fastapi-rye.git'
+    repoURL: 'git@github.com:pmpaulino/unifi.git'
     targetRevision: main
-    path: 'k8s/overlays/nonprod'
+    path: 'k8s/base'
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: fastapi-app
+    namespace: unifi
   syncPolicy:
     automated:
       prune: true
