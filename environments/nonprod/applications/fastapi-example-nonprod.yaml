@@ -6,12 +6,12 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'git@github.com:pmpaulino/homelab-argo-apps.git'
+    repoURL: 'git@github.com:pmpaulino/hello-dagger-fastapi-rye.git'
     targetRevision: main
-    path: 'apps/fastapi-example/overlays/nonprod'
+    path: 'k8s/overlays/nonprod'
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: fastapi-example-nonprod
+    namespace: default
   syncPolicy:
     automated:
       prune: true

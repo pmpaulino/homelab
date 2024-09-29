@@ -11,7 +11,6 @@ argocd app create app-of-apps \
     --dest-namespace argocd \
     --dest-server https://kubernetes.default.svc \
     --repo git@github.com:pmpaulino/homelab-argo-apps.git \
-    --path environments/pi 
-argocd app sync app-of-apps  
-
+    --path environments/nonprod 
+argocd app sync app-of-apps
 ```
