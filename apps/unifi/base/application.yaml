@@ -1,20 +1,20 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: unifi-prod
+  name: fastapi-example
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: 'git@github.com:pmpaulino/homelab-argo-apps.git'
+    repoURL: 'git@github.com:pmpaulino/hello-dagger-fastapi-rye.git'
     targetRevision: main
-    path: 'apps/unifi/overlays/prod'
-    kustomize:
-      # Optional Kustomize settings
+    path: 'k8s/overlays/nonprod'
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: unifi-prod
+    namespace: fastapi-app
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

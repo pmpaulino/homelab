@@ -1,4 +1,4 @@
 resources:
   - ../../apps/fastapi-example/base/
-  # - applications/unifi-nonprod.yaml
-  # - applications/home-assistant-nonprod.yaml
+  # - ../../apps/unifi/base/
+  # - ../../apps/home-assistant/base/
