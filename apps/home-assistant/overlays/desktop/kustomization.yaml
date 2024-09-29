@@ -1,0 +1,7 @@
+namespace: desktop
+resources:
+  - ../../base
+namePrefix: desktop-
+images:
+  - name: myregistry/home-assistant
+    newTag: desktop
