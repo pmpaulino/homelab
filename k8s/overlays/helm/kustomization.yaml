@@ -8,15 +8,18 @@ patches:
         kind: Ingress
         name: unifi
     patch: |-
-      - op: remove #action 
+      # Tailscale operator will handle the TLS secret
+      - op: remove
         path: /spec/tls/0/secretName
-      - op: replace #action 
+      # Tailscale operator expects the port to be named https
+      - op: replace
         path: /spec/rules/0/http/paths/0/backend/service/port/name
         value: https
   - target:
         kind: Deployment
         name: unifi
     patch: |-
+      # Tailscale operator expects the port to be named https
       - op: replace
         path: /spec/template/spec/containers/0/ports/0/name
         value: https
@@ -33,6 +36,7 @@ patches:
       kind: Service
       name: unifi-gui
     patch: |-
+      # Tailscale operator expects the port to be named https
       - op: replace
         path: /spec/ports/0/name
         value: https
