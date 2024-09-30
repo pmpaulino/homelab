@@ -21,7 +21,8 @@ spec:
           service:
             name: unifi-gui
             port:
-              name: https
+              name: https-gui
   tls:
   - hosts:
     - "unifi"
+    secretName: example-tls

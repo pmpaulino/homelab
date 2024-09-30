@@ -9,8 +9,6 @@ metadata:
     app.kubernetes.io/name: unifi
     app.kubernetes.io/instance: unifi
     app.kubernetes.io/version: "v8.4.62"
-  annotations:
-    link.argocd.argoproj.io/external-link: https://unifi.lemur-lake.ts.net
 spec:
   replicas: 1
   strategy:
@@ -30,7 +28,7 @@ spec:
         image: "ghcr.io/jacobalberty/unifi-docker:v8.4.62"
         imagePullPolicy: IfNotPresent
         ports:
-        - name: https
+        - name: https-gui
           containerPort: 8443
           protocol: TCP
         - name: controller
@@ -61,7 +59,7 @@ spec:
         livenessProbe:
           httpGet:
             path: /status
-            port: https
+            port: https-gui
             scheme: HTTPS
           initialDelaySeconds: 0
           periodSeconds: 10
@@ -71,7 +69,7 @@ spec:
         readinessProbe:
           httpGet:
             path: /status
-            port: https
+            port: https-gui
             scheme: HTTPS
           initialDelaySeconds: 0
           periodSeconds: 10
@@ -81,7 +79,7 @@ spec:
         startupProbe:
           httpGet:
             path: /status
-            port: https
+            port: https-gui
             scheme: HTTPS
           periodSeconds: 5
           timeoutSeconds: 1

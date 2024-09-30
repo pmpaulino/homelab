@@ -12,10 +12,10 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - name: https
+  - name: https-gui
     port: 8443
     protocol: TCP
-    targetPort: https
+    targetPort: https-gui
   selector:
     app.kubernetes.io/name: unifi
     app.kubernetes.io/instance: unifi
