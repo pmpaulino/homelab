@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: 'git@github.com:pmpaulino/unifi.git'
     targetRevision: main
-    path: 'k8s/base/helm'
+    path: 'k8s/overlays/helm'
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: unifi
