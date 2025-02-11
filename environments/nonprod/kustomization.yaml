@@ -1,5 +1,6 @@
 resources:
   # - ../../apps/fastapi-example/base/
-  - ../../apps/unifi/base/
+  # - ../../apps/unifi/base/
   # - ../../apps/cert-manager/base/
   # - ../../apps/home-assistant/base/
+  - ../../infra/kube-prometheus-stack/base/
