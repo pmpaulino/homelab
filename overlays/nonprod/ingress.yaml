@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: kube-prometheus-stack-ingress
-  namespace: default
+  namespace: kube-prometheus-stack
 spec:
   ingressClassName: tailscale
   rules:
