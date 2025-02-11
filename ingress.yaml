@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kube-prometheus-stack-ingress
+  namespace: default
+spec:
+  ingressClassName: tailscale
+  rules:
+  - host: grafana
+    http:
+      paths:
+      - backend:
+          service:
+            name: kube-prometheus-stack-grafana
+            port:
+              name: http-web
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - grafana
