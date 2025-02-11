@@ -1,2 +1,3 @@
 resources:
-  - application.yaml
+  - kube-prometheus-stack.yaml
+  - kube-prometheus-stack-crds.yaml
