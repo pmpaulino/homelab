@@ -31,3 +31,7 @@ cd crds && \
   kustomize create --autodetect && \
   cd ..
 ```
+
+## TODO
+
+- [ ] figure out a way to label the ns `kubectl label namespace kube-prometheus-stack pod-security.kubernetes.io/enforce=privileged`
