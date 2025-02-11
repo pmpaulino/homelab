@@ -1,0 +1,13 @@
+repositories:
+  - name: tailscale
+    url: https://pkgs.tailscale.com/helmcharts
+
+releases:
+  - name: tailscale
+    namespace: tailscale
+    chart: tailscale/tailscale-operator
+    version: v1.80.0
+    values:
+      - installCRDs: true
+      - oauth.clientId: "<OAauth client ID>"
+      - oauth.clientSecret: "<OAuth client secret>"
