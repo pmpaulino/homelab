@@ -35,10 +35,10 @@ Manual steps:
 
 Automate:
 
-- Patch kube-prometheus-stack ns so it can complete
-- Create secret for tailscale operator
-- Patch argocd configmap to allow insecure connections
-- Reboot argocd to pick up configmap changes
-- Install argocd tailscale ingress
-- Depends on keeps things out of sync
-- sealed secrets to manage secrets
+- [ ] Create secret for tailscale operator
+- [ ] Patch kube-prometheus-stack ns so it can complete
+- [x] Patch argocd configmap to allow insecure connections
+- [ ] Reboot argocd to pick up configmap changes
+- [x] Install argocd tailscale ingress
+- [x] Depends on keeps things out of sync
+- [ ] sealed secrets to manage secrets
