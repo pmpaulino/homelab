@@ -113,6 +113,14 @@ helm upgrade \
 
 - Don't store secrets in manifest files. Use secrets or vault.
   - kubectl create secret generic my-secret --from-literal=username=admin --from-literal=password=1f2d1e2e67df
+  - Consider using sealed-secrets
+
+```shell
+kubectl create secret generic operator-oauth \
+  --namespace tailscale \
+  --from-literal=client_id=<placeholder> \
+  --from-literal=client_secret=<placeholder>
+```
 
 ```yaml
     spec:
