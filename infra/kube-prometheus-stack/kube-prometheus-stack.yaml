@@ -18,5 +18,3 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-  dependsOn:
-  - name: kube-prometheus-stack-crds
