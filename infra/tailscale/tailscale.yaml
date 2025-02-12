@@ -18,5 +18,5 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-    dependsOn:
-    - name: tailscale-crds
+  dependsOn:
+  - name: tailscale-crds
