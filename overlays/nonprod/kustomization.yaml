@@ -3,3 +3,15 @@ kind: Kustomization
 resources:
 - ../../base
 - ingress.yaml
+
+patches:
+- patch: |
+    apiVersion: v1
+    kind: Namespace
+    metadata:
+      name: kube-prometheus-stack
+      labels:
+        pod-security.kubernetes.io/enforce: privileged
+  target:
+    kind: Namespace
+    name: kube-prometheus-stack
