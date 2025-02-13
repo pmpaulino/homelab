@@ -38,9 +38,12 @@ export SECRETNAME="homelab-seal"
 
 ### Seal a secret from existing certs
 
-- `op document get homelab-seal-pub.crt`
-- `op document get homelab-seal-priv.key`
-- `k -n "$NAMESPACE" create secret tls "$SECRETNAME" --cert="/tmp/pub.crt" --key="/tmp/priv.key"`
+```shell
+k -n "$NAMESPACE" create secret tls "$SECRETNAME" \
+  --cert=<(op document get homelab-seal-pub.crt) \
+  --key=<(op document get homelab-seal-priv.key)
+```
+
 - `k -n "$NAMESPACE" label secret "$SECRETNAME" sealedsecrets.bitnami.com/sealed-secrets-key=active`
 - `k -n "$NAMESPACE" delete pod -l name=sealed-secrets-controller`
 
