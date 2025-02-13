@@ -4,5 +4,6 @@ resources:
   # - ../../apps/cert-manager/base/
   # - ../../apps/home-assistant/base/
   - ../../infra/argocd/
+  - ../../infra/sealed-secrets/
   - ../../infra/tailscale/
   - ../../infra/kube-prometheus-stack/
