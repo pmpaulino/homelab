@@ -32,6 +32,7 @@ Manual steps:
 - Login to ArgoCD CLI
 - Setup repo credentials for argocd
 - Install ArgoCD app of apps
+- Add sealed-secrets self-managed certs
 
 Automate:
 
