@@ -6,13 +6,19 @@ resources:
 
 patches:
 - patch: |
-    apiVersion: v1
-    kind: ConfigMap
+    apiVersion: apps/v1
+    kind: Deployment
     metadata:
-      name: argocd-cmd-params-cm
+      name: argocd-server
       namespace: argocd
-    data:
-      server.insecure: "true"
+    spec:
+      template:
+        spec:
+          containers:
+          - name: argocd-server
+            args:
+            - /usr/local/bin/argocd-server
+            - --insecure
   target:
-    kind: ConfigMap
-    name: argocd-cmd-params-cm
+    kind: Deployment
+    name: argocd-server
