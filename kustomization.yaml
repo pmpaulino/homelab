@@ -1,7 +1,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- ../argocd/overlays/nonprod # This can be swapped out to a url once the repo is public
+# This can be swapped out to a url once the repo is public.
+# Unsure if it should be the homelab-argo-apps or argocd repo.
+- ../argocd/overlays/nonprod
 
 secretGenerator:
   # GitHub repo credentials secret
