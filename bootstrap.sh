@@ -32,7 +32,8 @@ talosctl gen config gamer "https://$TALOS_NODE:6443" \
     --with-secrets "tmp/talos-secrets.yaml" \
     --config-patch @"tmp/talos-patch-manifests.yaml" \
     --config-patch @talos-patch.yaml \
-    --output "tmp/"
+    --output "tmp/" \
+    --force
 
 echo "Generating example talos configs with example secrets..."
 talosctl gen config gamer "https://$TALOS_NODE:6443" \
