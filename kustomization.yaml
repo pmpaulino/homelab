@@ -1,0 +1,28 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ../argocd/overlays/nonprod # This can be swapped out to a url once the repo is public
+
+secretGenerator:
+  # GitHub repo credentials secret
+  - name: github-repo-creds
+    type: Opaque
+    options:
+      labels:
+        argocd.argoproj.io/secret-type: repo-creds
+    files:
+      - sshPrivateKey=tmp/sshprivatekey
+    literals:
+      - type=git
+      - url=git@github.com:pmpaulino/homelab-argo-apps.git
+
+  # Sealed Secrets TLS secret
+  - name: sealed-secrets-key
+    type: kubernetes.io/tls
+    namespace: kube-system
+    options:
+      labels:
+        sealedsecrets.bitnami.com/sealed-secrets-key: active
+    files:
+      - tmp/tls.crt
+      - tmp/tls.key
