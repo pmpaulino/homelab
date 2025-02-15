@@ -4,6 +4,7 @@ resources:
 # This can be swapped out to a url once the repo is public.
 # Unsure if it should be the homelab-argo-apps or argocd repo.
 - ../argocd/overlays/nonprod
+- ../homelab-argo-apps/environments/nonprod/
 
 secretGenerator:
   # GitHub repo credentials secret
@@ -22,7 +23,7 @@ secretGenerator:
   # Sealed Secrets TLS secret
   - name: sealed-secrets-key
     type: kubernetes.io/tls
-    namespace: kube-system
+    namespace: sealed-secrets
     options:
       labels:
         sealedsecrets.bitnami.com/sealed-secrets-key: active

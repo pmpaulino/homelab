@@ -29,6 +29,9 @@ kustomize build . > "tmp/argocd-manifests.yaml"
     sed 's/^/        /' "tmp/argocd-manifests.yaml"
 } > "tmp/talos-patch-manifests.yaml"
 
+# Bootstrap the cluster
+echo "Starting cluster bootstrap process..."
+
 # Generate talos configs with real secrets
 echo "Generating talos configs with real secrets..."
 talosctl gen config gamer "https://$TALOS_NODE:6443" \
@@ -44,9 +47,6 @@ talosctl gen config gamer "https://$TALOS_NODE:6443" \
     --config-patch @talos-patch.yaml \
     --output "example/" \
     --force
-
-# Bootstrap the cluster
-echo "Starting cluster bootstrap process..."
 
 # Reset Talos cluster (this requires manual intervention)
 echo "Please reboot the machine and enter maintenance mode manually"
