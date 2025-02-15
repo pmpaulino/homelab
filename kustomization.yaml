@@ -7,8 +7,11 @@ resources:
 
 secretGenerator:
   # GitHub repo credentials secret
+  # TODO this doesn't seem to work as expected
+  # Need to figure out how to get the secret working properly
   - name: github-repo-creds
     type: Opaque
+    namespace: argocd
     options:
       labels:
         argocd.argoproj.io/secret-type: repo-creds

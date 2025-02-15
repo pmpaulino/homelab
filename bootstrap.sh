@@ -10,9 +10,12 @@ mkdir -p "tmp"
 
 # Get the required secrets from 1Password
 echo "Getting secrets from 1Password..."
-op read "op://Private/i7sdiseuc47purydotahi7ksfm/private key" -o "tmp/sshprivatekey" --force
+# ArgoCD GitHub repo credentials
+op read "op://Private/2mhp2daf5vcvgmscl5vtbp6l5e/private key" -o "tmp/sshprivatekey" --force
+# Sealed Secrets TLS - https://github.com/bitnami-labs/sealed-secrets/blob/main/docs/bring-your-own-certificates.md
 op document get "homelab-seal-pub.crt" -o "tmp/tls.crt" --force
 op document get "homelab-seal-priv.key" -o "tmp/tls.key" --force
+# Talos secrets - https://www.talos.dev/v1.9/reference/cli/#talosctl-gen-secrets
 op document get "talos-secrets.yaml" -o "tmp/talos-secrets.yaml" --force
 
 # Build the manifests and patch
@@ -53,7 +56,12 @@ read -r
 # Apply Talos configuration
 echo "Applying Talos configuration..."
 talosctl apply-config -n "$TALOS_NODE" --insecure \
-    --file "tmp/talos-patched-controlplane.yaml"
+    --file "tmp/controlplane.yaml"
+
+# Wait for the config to be applied
+# TODO figure out a better way to wait
+echo "Sleeping 60 seconds before bootstraping"
+sleep 60
 
 # Bootstrap Talos cluster
 echo "Bootstrapping Talos cluster..."
@@ -65,7 +73,14 @@ echo "Cleaning up stale Tailscale entries..."
 echo "Press enter when ready to continue..."
 read -r
 
+# Wait for the config to be applied
+# TODO figure out a better way to wait
+echo "Sleeping 60 seconds before checking health"
+sleep 60
+
 # Wait for the cluster to be ready
+# TODO this doesn't seem to work as expected, just stays in pending state
+# I think because the node list has duplicates, discovered nodes: ["192.168.2.3" "192.168.2.3"]
 echo "Waiting for cluster to be ready..."
 talosctl health -n "$TALOS_NODE" -e "$TALOS_NODE" \
     --talosconfig "tmp/talosconfig"
