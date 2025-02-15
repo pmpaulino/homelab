@@ -11,7 +11,7 @@ mkdir -p "tmp"
 # Get the required secrets from 1Password
 echo "Getting secrets from 1Password..."
 # ArgoCD GitHub repo credentials
-op read "op://Private/2mhp2daf5vcvgmscl5vtbp6l5e/private key" -o "tmp/sshprivatekey" --force
+op read "op://Private/2mhp2daf5vcvgmscl5vtbp6l5e/private key?ssh-format=openssh" -o "tmp/sshprivatekey" --force
 # Sealed Secrets TLS - https://github.com/bitnami-labs/sealed-secrets/blob/main/docs/bring-your-own-certificates.md
 op document get "homelab-seal-pub.crt" -o "tmp/tls.crt" --force
 op document get "homelab-seal-priv.key" -o "tmp/tls.key" --force

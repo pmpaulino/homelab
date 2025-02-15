@@ -7,8 +7,6 @@ resources:
 
 secretGenerator:
   # GitHub repo credentials secret
-  # TODO this doesn't seem to work as expected
-  # Need to figure out how to get the secret working properly
   - name: github-repo-creds
     type: Opaque
     namespace: argocd
@@ -19,7 +17,7 @@ secretGenerator:
       - sshPrivateKey=tmp/sshprivatekey
     literals:
       - type=git
-      - url=git@github.com:pmpaulino/homelab-argo-apps.git
+      - url=ssh://git@github.com/
 
   # Sealed Secrets TLS secret
   - name: sealed-secrets-key
