@@ -425,7 +425,7 @@ cluster:
     secret: sqE1at1a2OKq4MGkks54FjjJMGZqw1AZ0aT031iODKg= # Shared secret of cluster (base64 encoded random 32 bytes).
     # Provides control plane specific configuration options.
     controlPlane:
-        endpoint: https://192.168.2.3:6443 # Endpoint is the canonical controlplane endpoint, which can be an IP address or a DNS hostname.
+        endpoint: https://192.168.10.162:6443 # Endpoint is the canonical controlplane endpoint, which can be an IP address or a DNS hostname.
     clusterName: gamer # Configures the cluster's name.
     # Provides cluster specific network configuration options.
     network:
@@ -461,7 +461,7 @@ cluster:
         image: registry.k8s.io/kube-apiserver:v1.32.1 # The container image used in the API server manifest.
         # Extra certificate subject alternative names for the API server's certificate.
         certSANs:
-            - 192.168.2.3
+            - 192.168.10.162
         disablePodSecurityPolicy: true # Disable PodSecurityPolicy in the API server and default manifests.
         # Configure the API server admission plugins.
         admissionControl:

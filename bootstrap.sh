@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Configuration variables - modify these as needed
-TALOS_NODE="192.168.2.3"
+TALOS_NODE="192.168.10.162"
 
 # Make temp directory
 echo "Creating temp directory..."
@@ -31,6 +31,8 @@ kustomize build . > "tmp/argocd-manifests.yaml"
 
 # Bootstrap the cluster
 echo "Starting cluster bootstrap process..."
+echo "Press enter when ready to continue..."
+read -r
 
 # Generate talos configs with real secrets
 echo "Generating talos configs with real secrets..."
