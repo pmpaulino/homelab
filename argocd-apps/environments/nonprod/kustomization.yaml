@@ -1,8 +1,8 @@
 resources:
   # - ../../apps/fastapi-example/base/
-  # - ../../apps/unifi/nonprod
+  # - ../../apps/unifi/nonprod/
   # - ../../apps/cert-manager/base/
-  # - ../../apps/home-assistant/base/
+  # - ../../apps/home-assistant/nonprod/
   - ../../infra/argocd/
   - ../../infra/sealed-secrets/
   - ../../infra/tailscale/

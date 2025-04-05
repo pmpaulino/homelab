@@ -1,0 +1,11 @@
+repositories:
+  - name: pajikos
+    url: https://pajikos.github.io/home-assistant-helm-chart/
+
+releases:
+  - name: home-assistant
+    namespace: home-assistant
+    chart: pajikos/home-assistant
+    version: v0.2.116
+    # values:
+    #   - values.yaml

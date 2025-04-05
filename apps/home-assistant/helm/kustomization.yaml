@@ -1,0 +1,7 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- pod_home-assistant-test-connection.yaml
+- service_home-assistant.yaml
+- serviceaccount_home-assistant.yaml
+- statefulset_home-assistant.yaml

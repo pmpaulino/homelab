@@ -1,0 +1,61 @@
+---
+# Source: home-assistant/templates/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: home-assistant
+  labels:
+    helm.sh/chart: home-assistant-0.2.116
+    app.kubernetes.io/name: home-assistant
+    app.kubernetes.io/instance: home-assistant
+    app.kubernetes.io/version: 2025.4.1
+    app.kubernetes.io/managed-by: Helm
+spec:
+  serviceName: home-assistant
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: home-assistant
+      app.kubernetes.io/instance: home-assistant
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: home-assistant
+        app.kubernetes.io/instance: home-assistant
+      annotations:
+    spec:
+      serviceAccountName: home-assistant
+      securityContext: {}
+      containers:
+        - name: home-assistant
+          securityContext: {}
+          image: ghcr.io/home-assistant/home-assistant:2025.4.1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8123
+              protocol: TCP
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: http
+              scheme: HTTP
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 2
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: http
+              scheme: HTTP
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          volumeMounts:
+            - mountPath: /config
+              name: home-assistant
+      volumes:
+        - name: home-assistant
+          emptyDir: {}

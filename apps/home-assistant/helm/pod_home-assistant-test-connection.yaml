@@ -1,0 +1,23 @@
+---
+# Source: home-assistant/templates/tests/test-connection.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: home-assistant-test-connection
+  labels:
+    helm.sh/chart: home-assistant-0.2.116
+    app.kubernetes.io/name: home-assistant
+    app.kubernetes.io/instance: home-assistant
+    app.kubernetes.io/version: 2025.4.1
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    helm.sh/hook: test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command:
+        - wget
+      args:
+        - home-assistant:8080
+  restartPolicy: Never
