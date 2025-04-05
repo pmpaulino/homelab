@@ -1,0 +1,463 @@
+# Default values for UniFi helm chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# -- upgrade strategy type (e.g. Recreate or RollingUpdate)
+strategyType: Recreate
+
+image:
+  # -- Container image name
+  repository: ghcr.io/jacobalberty/unifi-docker
+  # -- Container image tag
+  # @default -- `""` (use appVersion in `Chart.yaml`)
+  tag: ""
+  # -- Image pull policy. One of `Always`, `Never`, `IfNotPresent`
+  pullPolicy: IfNotPresent
+
+# -- Set container-level security context. The parameter `bindPrivilegedPorts=true` will add the `SETFCAP` capability automatically.
+securityContext: {}
+
+# -- Set pod-level security context
+podSecurityContext: {}
+
+# If enabled, the controller, discovery, GUI, STUN and syslog services will not be
+# created.
+# Instead, one service will be created with the port and nodePort settings from
+# controllerService, discoveryService, guiService, stunService and syslogService.
+# This is useful if, for example, the ClusterIP network is routable and being
+# accessed directly by access points, and the APs don't have a way to discern
+# different services on different IPs.
+unifiedService:
+  # -- Create a unified service instead of dedicated services.
+  # If enabled, the controller, discovery, GUI, STUN and syslog services will not be created.
+  enabled: false
+  # -- Kubernetes service type
+  type: NodePort
+  # -- (int) Specify the nodePort value for the LoadBalancer and NodePort service types.
+  # ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
+  #
+  nodePort: ~
+  # -- Provide any additional annotations which may be required. This can be used to
+  # set the LoadBalancer service type to internal only.
+  # ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
+  annotations: {}
+  # -- Labels to add to the unified service
+  labels: {}
+  # -- Use loadBalancerIP to request a specific static IP,
+  # otherwise leave blank
+  loadBalancerIP: ""
+  # -- If specified and supported by the platform, this will restrict traffic through the load-balancer to the specified client IPs.
+  loadBalancerSourceRanges: []
+  # -- Set the externalTrafficPolicy in the Service to either `Cluster` or `Local`
+  externalTrafficPolicy: ""
+
+guiService:
+  # -- Enable service for the main web UI
+  enabled: true
+  # -- Kubernetes service type
+  type: ClusterIP
+  # -- Kubernetes port where the service is exposed
+  port: 8443
+  # -- (int) Specify the nodePort value for the LoadBalancer and NodePort service types.
+  # ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
+  #
+  nodePort: ~
+  # -- Provide any additional annotations which may be required. This can be used to
+  # set the LoadBalancer service type to internal only.
+  # ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
+  annotations: {}
+  # -- Labels to add to the GUI service
+  labels: {}
+  # -- Use loadBalancerIP to request a specific static IP,
+  # otherwise leave blank
+  loadBalancerIP: ""
+  # -- If specified and supported by the platform, this will restrict traffic through the load-balancer to the specified client IPs.
+  loadBalancerSourceRanges: []
+  # -- Set the externalTrafficPolicy in the Service to either `Cluster` or `Local`
+  externalTrafficPolicy: ""
+
+captivePortalService:
+  # -- Enable service for the captive portal webpage
+  enabled: true
+  # -- Kubernetes service type
+  type: ClusterIP
+  # -- Kubernetes port where the http service is exposed
+  http: 8880
+  # -- Kubernetes port where the https service is exposed
+  https: 8843
+  # -- Provide any additional annotations which may be required. This can be used to
+  # set the LoadBalancer service type to internal only.
+  # ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
+  annotations: {}
+  # -- Labels to add to the captive portal service
+  labels: {}
+  # -- Use loadBalancerIP to request a specific static IP,
+  # otherwise leave blank
+  loadBalancerIP: ""
+  # -- If specified and supported by the platform, this will restrict traffic through the load-balancer to the specified client IPs.
+  loadBalancerSourceRanges: []
+  # -- Set the externalTrafficPolicy in the Service to either `Cluster` or `Local`
+  externalTrafficPolicy: ""
+
+  ## Ingress settings
+  ingress:
+    # -- Enable Ingress resource
+    enabled: false
+    # -- Defines which ingress controller will implement the resource
+    ingressClassName: ""
+    # -- Annotations for Ingress resource
+    annotations: {}
+    # -- Ingress path
+    path: /
+    # -- Hostname(s) for the Ingress resource
+    hosts:
+      - unifi-captive.example.com
+    # -- Ingress TLS configuration
+    tls: []
+      # - secretName: captive-tls
+      #   hosts:
+      #     - unifi-captive.example.com
+
+controllerService:
+  # -- Enable service for the controller
+  enabled: true
+  # -- Kubernetes service type
+  type: NodePort
+  # -- Kubernetes port where the service is exposed
+  port: 8080
+  # -- Provide any additional annotations which may be required. This can be used to
+  # set the LoadBalancer service type to internal only.
+  # ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
+  annotations: {}
+  # -- Labels to add to the controller service
+  labels: {}
+  # -- Use loadBalancerIP to request a specific static IP,
+  # otherwise leave blank
+  loadBalancerIP: ""
+  # -- If specified and supported by the platform, this will restrict traffic through the load-balancer to the specified client IPs.
+  loadBalancerSourceRanges: []
+  # -- Set the externalTrafficPolicy in the Service to either `Cluster` or `Local`
+  externalTrafficPolicy: ""
+
+  ## Ingress settings
+  ingress:
+    # -- Enable Ingress resource
+    enabled: false
+    # -- Defines which ingress controller will implement the resource
+    ingressClassName: ""
+    # -- Annotations for Ingress resource
+    annotations: {}
+    # -- Ingress path
+    path: /
+    # -- Hostname(s) for the Ingress resource
+    hosts:
+      - unifi-controller.example.com
+    # -- Ingress TLS configuration
+    tls: []
+      # - secretName: controller-tls
+      #   hosts:
+      #     - unifi-controller.example.com
+
+stunService:
+  # -- Enable service the STUN feature
+  enabled: true
+  # -- Kubernetes service type
+  type: NodePort
+  # -- Kubernetes port where the service is exposed
+  port: 3478
+  # -- Provide any additional annotations which may be required. This can be used to
+  # set the LoadBalancer service type to internal only.
+  # ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
+  annotations: {}
+  # -- Labels to add to the STUN service
+  labels: {}
+  # -- Use loadBalancerIP to request a specific static IP,
+  # otherwise leave blank
+  loadBalancerIP: ""
+  # -- If specified and supported by the platform, this will restrict traffic through the load-balancer to the specified client IPs.
+  loadBalancerSourceRanges: []
+  # -- Set the externalTrafficPolicy in the Service to either `Cluster` or `Local`
+  externalTrafficPolicy: ""
+
+discoveryService:
+  # -- Enable service for the discovery feature
+  enabled: true
+  # -- Kubernetes service type
+  type: NodePort
+  # -- Kubernetes port where the service is exposed
+  port: 10001
+  # -- Provide any additional annotations which may be required. This can be used to
+  # set the LoadBalancer service type to internal only.
+  # ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
+  annotations: {}
+  # -- Labels to add to the discovery service
+  labels: {}
+  # -- Use loadBalancerIP to request a specific static IP,
+  # otherwise leave blank
+  loadBalancerIP: ""
+  # -- If specified and supported by the platform, this will restrict traffic through the load-balancer to the specified client IPs.
+  loadBalancerSourceRanges: []
+  # -- Set the externalTrafficPolicy in the Service to either `Cluster` or `Local`
+  externalTrafficPolicy: ""
+
+syslogService:
+  # -- Enable service for the syslog server.
+  # Used to capture syslog from UniFi devices if the feature is enabled in the site configuration.
+  enabled: true
+  # -- Kubernetes service type
+  type: NodePort
+  # -- Kubernetes port where the service is exposed
+  port: 5514
+  # -- Provide any additional annotations which may be required. This can be used to
+  # set the LoadBalancer service type to internal only.
+  # ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
+  annotations: {}
+  # -- Labels to add to the syslog service
+  labels: {}
+  # -- Use loadBalancerIP to request a specific static IP,
+  # otherwise leave blank
+  loadBalancerIP: ""
+  # -- If specified and supported by the platform, this will restrict traffic through the load-balancer to the specified client IPs.
+  loadBalancerSourceRanges: []
+  # -- Set the externalTrafficPolicy in the Service to either `Cluster` or `Local`
+  externalTrafficPolicy: ""
+
+speedtestService:
+  # -- Enable service for mobile speedtest inside the UniFi Mobile app
+  enabled: true
+  # -- Kubernetes service type
+  type: ClusterIP
+  # -- Kubernetes port where the service is exposed
+  port: 6789
+  # -- Provide any additional annotations which may be required. This can be used to
+  # set the LoadBalancer service type to internal only.
+  # ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
+  annotations: {}
+  # -- Labels to add to the speedtest service
+  labels: {}
+  # -- Use loadBalancerIP to request a specific static IP,
+  # otherwise leave blank
+  loadBalancerIP: ""
+  # -- If specified and supported by the platform, this will restrict traffic through the load-balancer to the specified client IPs.
+  loadBalancerSourceRanges: []
+  # -- Set the externalTrafficPolicy in the Service to either `Cluster` or `Local`
+  externalTrafficPolicy: ""
+
+## Ingress settings
+ingress:
+  # -- Enable Ingress resource
+  enabled: true
+  # -- Defines which ingress controller will implement the resource
+  ingressClassName: "tailscale"
+  # -- Annotations for Ingress resource
+  annotations: {}
+  # -- Ingress path
+  path: /
+  # -- Hostname(s) for the Ingress resource
+  hosts:
+    - unifi
+  # -- Ingress TLS configuration
+  tls:
+    - secretName: example-tls
+      hosts:
+        - unifi
+
+# -- Timezone for UniFi controller
+timezone: UTC
+# -- Allow listening on privileged ports. Required when `controllerService.port` or `guiService.port` is less than 1024.
+bindPrivilegedPorts: true
+# -- This is used to determine whether or not the UniFi service runs as a privileged (root) user. The default value is `true` but it is recommended to use `false` instead.
+runAsRoot: false
+# -- Set the UID (user id) the UniFi service runs as when `runAsRoot` is set to false
+UID: 999
+# -- These GID (group id) the UniFi service runs as when `runAsRoot` is set to false
+GID: 999
+
+# If you provide your own custom certificate in <unifi-data>/cert
+# you can define the following parameters to configure the controller
+customCert:
+  # -- Enable use of your own custom certificate in <unifi-data>/cert
+  enabled: false
+  # -- Sets the CERT_IS_CHAIN environment variable.
+  # See [Certificate Support](https://github.com/jacobalberty/unifi-docker?tab=readme-ov-file#certificate-support)
+  isChain: false
+  # -- File name of the certificate
+  certName: tls.crt
+  # -- File name of the private key for the certificate
+  keyName: tls.key
+  # -- Load custom certificate from an existing Kubernetes secret.
+  # If you want to store certificate and its key as a Kubernetes tls secret
+  # you can pass the name of that secret using certSecret variable
+  certSecret: "" # E.g. "unifi-tls"
+
+## Logging configuration
+logging:
+  promtail:
+    # -- Enable promtail sidecar
+    enabled: false
+    image:
+      # -- Promtail container image name
+      repository: grafana/promtail
+      # -- Promtail container image tag
+      tag: 2.9.8
+      # -- Promtail image pull policy. One of `Always`, `Never`, `IfNotPresent`
+      pullPolicy: IfNotPresent
+    loki:
+      # -- Loki backend for promtail sidecar
+      url: http://loki.logs.svc.cluster.local:3100/loki/api/v1/push
+
+## define an external mongoDB instead of using the built-in mongodb
+mongodb:
+  # -- Use external mongoDB instead of using the built-in mongodb
+  enabled: false
+  # -- Maps to `db.mongo.uri`
+  dbUri: mongodb://mongo/unifi
+  # -- Maps to `statdb.mongo.uri`
+  statDbUri: mongodb://mongo/unifi_stat
+  # -- Maps to `unifi.db.name`
+  databaseName: unifi
+
+persistence:
+  # -- Use persistent volume to store data
+  enabled: true
+  # -- Storage Class to use for the PVC
+  storageClass: "local-path"
+  # -- Use an existing PVC to persist data
+  existingClaim: ""
+  # -- Persistence access modes
+  accessMode: ReadWriteOnce
+  # -- Size of persistent volume claim
+  size: 5Gi
+  # -- Do not delete the PVC upon helm uninstall by adding
+  # the `helm.sh/resource-policy: keep` annotation.
+  skipuninstall: true
+
+# -- specify additional volume to be used by extraVolumeMounts inside unifi container
+extraVolumes: []
+  # - name: additional-volume
+  #   hostPath:
+  #     path: /path/on/host
+  #     type: DirectoryOrCreate
+
+# -- specify additional VolumeMount to be mounted inside unifi container
+extraVolumeMounts: []
+  # - name: additional-volume
+  #   mountPath: /path/in/container
+
+# -- Extra java options
+extraJvmOpts: []
+  ## Here are some examples of valid JVM options:
+  ##
+  # - "-XX:MaxMetaspaceSize=256m"
+  # - "-Dlog4j.configurationFile=file:/configmap/log4j2.xml"
+  # - "-Dsystem_ip=1.2.3.4"
+
+# -- Java Virtual Machine (JVM) initial, and minimum, heap size.
+# Unset value means there is no lower limit
+jvmInitHeapSize: ""
+
+# -- Java Virtual Machine (JVM) maximum heap size
+# For larger installations a larger value is recommended.
+# For memory constrained system this value can be lowered.
+jvmMaxHeapSize: 1024M
+
+# -- Specify additional config files which are mounted to /configmap
+extraConfigFiles: {}
+  ## Here is an example for a custom log4j config:
+  ##
+  # log4j2.xml: |-
+  #   <?xml version="1.0" encoding="UTF-8"?>
+  #   <Configuration>
+  #     <Appenders>
+  #       <InMemoryAppender name="InMemoryAppender" activatedLogging="false">
+  #         <PatternLayout pattern="[%d{ISO8601}] &lt;%t&gt; %-5p %-6c{1} - %m%n" />
+  #       </InMemoryAppender>
+  #       <RollingFile name="server_log" fileName="logs/server.log" filePattern="logs/server.log.%i">
+  #         <PatternLayout pattern="[%d{ISO8601}] &lt;%t&gt; %-5p %-6c{1} - %m%n" />
+  #         <SizeBasedTriggeringPolicy size="10 MB"/>
+  #         <DefaultRolloverStrategy max="3" fileIndex="min" />
+  #       </RollingFile>
+  #       <Console name="STDOUT" target="SYSTEM_OUT">
+  #         <PatternLayout pattern="&lt;%t&gt; %-5p %-6c{1} - %m%n"/>
+  #       </Console>
+  #     </Appenders>
+  #     <Loggers>
+  #       <Root level="INFO">
+  #         <AppenderRef ref="InMemoryAppender" />
+  #         <AppenderRef ref="server_log" />
+  #         <AppenderRef ref="STDOUT" />
+  #       </Root>
+  #     </Loggers>
+  #   </Configuration>
+
+# -- Set container requests and limits for different resources like CPU or memory
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi
+
+# Liveness probe values
+# Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
+livenessProbe:
+  # -- Enable liveness [probe]
+  enabled: true
+  # -- Number of seconds after the container has started before probes are initiated.
+  initialDelaySeconds: 0
+  # -- How often (in seconds) to perform the [probe].
+  periodSeconds: 10
+  # -- Number of seconds after which the [probe] times out.
+  timeoutSeconds: 1
+  # -- Minimum consecutive failures for the [probe] to be considered failed after having succeeded.
+  failureThreshold: 3
+  # -- Minimum consecutive successes for the [probe] to be considered successful after having failed.
+  successThreshold: 1
+
+# Readiness probe values
+# Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
+readinessProbe:
+  # -- Enable readiness [probe]
+  enabled: true
+  # -- Number of seconds after the container has started before probes are initiated.
+  initialDelaySeconds: 0
+  # -- How often (in seconds) to perform the [probe].
+  periodSeconds: 10
+  # -- Number of seconds after which the [probe] times out.
+  timeoutSeconds: 1
+  # -- Minimum consecutive failures for the [probe] to be considered failed after having succeeded.
+  failureThreshold: 3
+  # -- Minimum consecutive successes for the [probe] to be considered successful after having failed.
+  successThreshold: 1
+
+# Startup probe values
+# Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
+startupProbe:
+  # -- Enable startup [probe]. **Set** `livenessProbe.initialDelaySeconds` **to at least `30` if you decide to disable the startupProbe!** Max startup delay is `failureThreshold * periodSeconds`.
+  enabled: true
+  # -- How often (in seconds) to perform the [probe].
+  periodSeconds: 5
+  # -- Number of seconds after which the [probe] times out.
+  timeoutSeconds: 1
+  # -- Minimum consecutive failures for the [probe] to be considered failed after having succeeded.
+  failureThreshold: 60
+
+# -- [Node selector] for pod assignment
+nodeSelector: {}
+
+# -- [Tolerations] for pod assignment
+tolerations: []
+
+# -- Assign custom [affinity] rules to the deployment
+affinity: {}
+
+# -- Annotations for UniFi pod
+podAnnotations: {}
+
+# -- Annotations for UniFi deployment
+deploymentAnnotations: {}

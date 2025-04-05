@@ -1,0 +1,20 @@
+---
+# Source: unifi/templates/pvc.yaml
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: unifi
+  annotations:
+    helm.sh/resource-policy: keep
+  labels:
+    helm.sh/chart: unifi-1.10.8
+    app.kubernetes.io/name: unifi
+    app.kubernetes.io/instance: unifi
+    app.kubernetes.io/version: "v8.4.62"
+spec:
+  accessModes:
+  - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "5Gi"
+  storageClassName: "local-path"
