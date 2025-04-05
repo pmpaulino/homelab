@@ -2,12 +2,23 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: fastapi-app
+  labels:
+    app: fastapi-app
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: fastapi-app
   template:
+    metadata:
+      labels:
+        app: fastapi-app
     spec:
       containers:
         - name: fastapi-app
+          image: fastapi-app:latest
+          ports:
+            - containerPort: 80
           env:
             - name: ENVIRONMENT
               value: "nonprod"
