@@ -1,0 +1,3 @@
+resources:
+  - application.yaml
+  - app-of-apps.yaml

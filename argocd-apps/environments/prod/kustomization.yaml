@@ -1,0 +1,4 @@
+resources:
+  - ../../apps/fastapi-example/overlays/prod/
+  # - ../../apps/unifi/overlays/prod/
+  # - ../../apps/home-assistant/overlays/prod/

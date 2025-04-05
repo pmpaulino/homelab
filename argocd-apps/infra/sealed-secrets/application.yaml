@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sealed-secrets
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'git@github.com:pmpaulino/sealed-secrets.git'
+    targetRevision: main
+    path: 'overlays/nonprod'
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: sealed-secrets
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      limit: 5  # number of retries
+      backoff:
+        duration: 5s # initial backoff duration
+        factor: 2    # multiplication factor for subsequent retries
+        maxDuration: 3m # maximum backoff duration
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true  # Can help with race conditions
+

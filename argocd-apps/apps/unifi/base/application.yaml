@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: unifi
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'git@github.com:pmpaulino/unifi.git'
+    targetRevision: main
+    path: 'k8s/overlays/helm'
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: unifi
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: app-of-apps
+  namespace: argocd
+spec:
+  destination:
+    namespace: argocd
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: environments/nonprod
+    repoURL: git@github.com:pmpaulino/homelab-argo-apps.git
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      limit: 5  # number of retries
+      backoff:
+        duration: 5s # initial backoff duration
+        factor: 2    # multiplication factor for subsequent retries
+        maxDuration: 3m # maximum backoff duration
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true  # Can help with race conditions

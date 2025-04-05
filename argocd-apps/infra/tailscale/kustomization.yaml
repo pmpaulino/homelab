@@ -1,0 +1,3 @@
+resources:
+  - tailscale-crds.yaml
+  - tailscale.yaml
