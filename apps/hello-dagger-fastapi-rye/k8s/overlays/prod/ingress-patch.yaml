@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: fastapi-app
+  annotations:
+    tailscale.com/funnel: "true"
+spec:
+  rules:
+    - host: fastapi-app
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: fastapi-app
+                port:
+                  number: 80
+  ingressClassName: tailscale
+  tls:
+    - hosts:
+        - fastapi-app
