@@ -6,9 +6,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'git@github.com:pmpaulino/unifi.git'
+    repoURL: 'git@github.com:pmpaulino/homelab.git'
     targetRevision: main
-    path: 'k8s/overlays/helm'
+    path: 'apps/unifi/base'
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: unifi

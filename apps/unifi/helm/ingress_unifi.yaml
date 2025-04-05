@@ -1,0 +1,29 @@
+---
+# Source: unifi/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: unifi
+  labels:
+    helm.sh/chart: unifi-1.12.3
+    app.kubernetes.io/name: unifi
+    app.kubernetes.io/instance: unifi
+    app.kubernetes.io/version: v9.0.114
+    app.kubernetes.io/managed-by: Helm
+spec:
+  ingressClassName: tailscale
+  rules:
+    - host: unifi
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: unifi-gui
+                port:
+                  name: https-gui
+  tls:
+    - hosts:
+        - unifi
+      secretName: example-tls

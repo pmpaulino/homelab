@@ -1,0 +1,7 @@
+releases:
+  - name: unifi
+    namespace: unifi
+    chart: oci://ghcr.io/mkilchhofer/unifi-chart/unifi
+    version: 1.12.3
+    values:
+      - values.yaml

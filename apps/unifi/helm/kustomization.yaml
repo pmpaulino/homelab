@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- deployment_unifi.yaml
+- ingress_unifi.yaml
+- persistentvolumeclaim_unifi.yaml
+- service_unifi-captiveportalservice.yaml
+- service_unifi-controller.yaml
+- service_unifi-discovery.yaml
+- service_unifi-gui.yaml
+- service_unifi-speedtest.yaml
+- service_unifi-stun.yaml
+- service_unifi-syslog.yaml

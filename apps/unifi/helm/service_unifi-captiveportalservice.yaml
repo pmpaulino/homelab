@@ -5,21 +5,22 @@ kind: Service
 metadata:
   name: unifi-captiveportalservice
   labels:
-    helm.sh/chart: unifi-1.10.8
+    helm.sh/chart: unifi-1.12.3
     app.kubernetes.io/name: unifi
     app.kubernetes.io/instance: unifi
-    app.kubernetes.io/version: "v8.4.62"
+    app.kubernetes.io/version: v9.0.114
+    app.kubernetes.io/managed-by: Helm
 spec:
   type: ClusterIP
   ports:
-  - port: 8880
-    targetPort: captive-http
-    protocol: TCP
-    name: captive-http
-  - port: 8843
-    targetPort: captive-https
-    protocol: TCP
-    name: captive-https
+    - port: 8880
+      targetPort: captive-http
+      protocol: TCP
+      name: captive-http
+    - port: 8843
+      targetPort: captive-https
+      protocol: TCP
+      name: captive-https
   selector:
     app.kubernetes.io/name: unifi
     app.kubernetes.io/instance: unifi

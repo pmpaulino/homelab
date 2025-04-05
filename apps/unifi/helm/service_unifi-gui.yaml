@@ -5,17 +5,18 @@ kind: Service
 metadata:
   name: unifi-gui
   labels:
-    helm.sh/chart: unifi-1.10.8
+    helm.sh/chart: unifi-1.12.3
     app.kubernetes.io/name: unifi
     app.kubernetes.io/instance: unifi
-    app.kubernetes.io/version: "v8.4.62"
+    app.kubernetes.io/version: v9.0.114
+    app.kubernetes.io/managed-by: Helm
 spec:
   type: ClusterIP
   ports:
-  - name: https-gui
-    port: 8443
-    protocol: TCP
-    targetPort: https-gui
+    - name: https-gui
+      port: 8443
+      protocol: TCP
+      targetPort: https-gui
   selector:
     app.kubernetes.io/name: unifi
     app.kubernetes.io/instance: unifi

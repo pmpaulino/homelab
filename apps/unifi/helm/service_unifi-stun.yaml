@@ -5,17 +5,18 @@ kind: Service
 metadata:
   name: unifi-stun
   labels:
-    helm.sh/chart: unifi-1.10.8
+    helm.sh/chart: unifi-1.12.3
     app.kubernetes.io/name: unifi
     app.kubernetes.io/instance: unifi
-    app.kubernetes.io/version: "v8.4.62"
+    app.kubernetes.io/version: v9.0.114
+    app.kubernetes.io/managed-by: Helm
 spec:
   type: NodePort
   ports:
-  - port: 3478
-    targetPort: stun
-    protocol: UDP
-    name: stun
+    - port: 3478
+      targetPort: stun
+      protocol: UDP
+      name: stun
   selector:
     app.kubernetes.io/name: unifi
     app.kubernetes.io/instance: unifi
