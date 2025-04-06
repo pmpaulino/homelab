@@ -6,9 +6,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'git@github.com:pmpaulino/tailscale.git'
+    repoURL: 'git@github.com:pmpaulino/homelab.git'
     targetRevision: main
-    path: 'crds'
+    path: 'infra/tailscale/crds'
   destination:
     server: https://kubernetes.default.svc
     namespace: tailscale

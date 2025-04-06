@@ -9,8 +9,8 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: environments/nonprod
-    repoURL: git@github.com:pmpaulino/homelab-argo-apps.git
+    path: app-of-apps/environments/nonprod
+    repoURL: git@github.com:pmpaulino/homelab.git
   syncPolicy:
     automated:
       prune: true
