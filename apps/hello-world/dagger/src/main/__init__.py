@@ -29,21 +29,26 @@ import random
 
 @object_type
 class HelloDaggerFastapiRye:
-    async def build_local_env(self, source: dagger.Directory) -> dagger.Container:
+    async def build_local(self, source: dagger.Directory) -> dagger.Container:
         """Build a ready-to-use development environment"""
         return (
             dag.container()
             # start from a base Python container
-            .from_("python:3.12")
+            .from_("python:3.12-slim")
             # add the source code at /src
             .with_directory("/src", source)
             # change the working directory to /src
             .with_workdir("/src")
+            # mount pip cache
+            .with_mounted_cache(
+                "/root/.cache/pip",
+                dag.cache_volume("pip-cache")
+            )
             # install development dependencies
-            .with_exec(["pip", "install", "-r", "requirements-dev.lock"])
+            .with_exec(["pip", "install", "--no-cache-dir", "-r", "requirements-dev.lock"])
         )
 
-    def build_env(self, source: dagger.Directory) -> dagger.Container:
+    def build(self, source: dagger.Directory) -> dagger.Container:
         """Build a production image with only requirements.lock and app directory"""
         return (
             dag.container()
@@ -67,10 +72,10 @@ class HelloDaggerFastapiRye:
         dagger call test --source=.
         """
         # Await the build_env function to get the container
-        container = await self.build_local_env(source)
+        container = await self.build_local(source)
         # Now you can call .with_exec() on the container
-        return await container.with_exec(["pytest"]).stdout()
 
+        return await container.with_exec(["pytest", "--capture=no"]).stdout()
 
     @function
     async def publish(self, source: dagger.Directory) -> str:
@@ -81,7 +86,7 @@ class HelloDaggerFastapiRye:
         """
         self.test(source)
         image_full_name = f"ttl.sh/fastapi-app-{random.randrange(10 ** 8)}:latest"
-        return await self.build_env(source).publish(image_full_name)
+        return await self.build(source).publish(image_full_name)
 
     @function
     async def kustomize(
