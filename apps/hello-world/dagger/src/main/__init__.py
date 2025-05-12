@@ -29,7 +29,7 @@ import random
 
 @object_type
 class HelloDaggerFastapiRye:
-    async def build_local(self, source: dagger.Directory) -> dagger.Container:
+    async def build_dev(self, source: dagger.Directory) -> dagger.Container:
         """Build a ready-to-use development environment"""
         return (
             dag.container()
@@ -72,7 +72,7 @@ class HelloDaggerFastapiRye:
         dagger call test --source=.
         """
         # Await the build_env function to get the container
-        container = await self.build_local(source)
+        container = await self.build_dev(source)
         # Now you can call .with_exec() on the container
 
         return await container.with_exec(["pytest", "--capture=no"]).stdout()
@@ -94,19 +94,20 @@ class HelloDaggerFastapiRye:
         directory_arg: dagger.Directory,
         image_name: str,
         image_tag: str,
-        env: str | None = "nonprod",
+        # env: str | None = "base",
     ) -> dagger.Directory:
         """
         Update the kustomization.yaml file with the new image URL
         
-        dagger call kustomize --directory_arg=k8s --source=. --image_name=image_name --image_tag=v0.0.1 export --path k8s_test/
+        dagger call kustomize --directory_arg=. --image_name=image_name --image_tag=v0.0.1 export --path .
         """
 
         return (
             dag.container()
             .from_("registry.k8s.io/kustomize/kustomize:v5.0.0")
             .with_mounted_directory("/mnt", directory_arg)
-            .with_workdir(f"/mnt/k8s/overlays/{env}")
+            .with_workdir("/mnt")
+            # .with_workdir(f"/mnt/k8s/base/{env}")
             .with_exec(
                 [
                     "kustomize",
@@ -116,17 +117,7 @@ class HelloDaggerFastapiRye:
                     f"fastapi-app:latest={image_name}:{image_tag}",
                 ]
             )
-            .with_workdir("/mnt/k8s")
-            .with_exec(
-                [
-                    "kustomize",
-                    "build",
-                    f"overlays/{env}",
-                    "-o",
-                    f"manifests/{env}/manifests.yaml",
-                ]
-            )
-            .directory("/mnt/k8s")
+            .directory("/mnt")
         )
 
     @function
