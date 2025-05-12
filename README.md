@@ -4,38 +4,40 @@ This repository contains the GitOps configuration for a Kubernetes-based homelab
 
 ## Repository Structure
 
-```
+```text
 .
-├── app-of-apps/           # ArgoCD Application of Applications pattern
-│   ├── apps/             # Application definitions
-│   ├── environments/     # Environment-specific configurations
-│   │   ├── nonprod/     # Development/Testing environment
-│   │   └── prod/        # Production environment
-│   └── infra/           # Infrastructure component definitions
-├── apps/                 # Individual application configurations
-│   ├── hello-world/     # Test application
-│   ├── home-assistant/  # Home automation platform
-│   └── unifi/           # Ubiquiti UniFi controller
-├── clusters/            # Cluster-specific configurations
-│   └── talos/          # Talos Linux configurations
-└── infra/              # Infrastructure components
-    ├── argocd/         # GitOps operator
-    ├── cert-manager/   # SSL/TLS certificate management
-    ├── kube-prometheus-stack/  # Monitoring and alerting
-    ├── sealed-secrets/ # Encrypted secrets management
-    └── tailscale/      # VPN solution
+├── app-of-apps/                 # ArgoCD Application of Applications pattern
+│   ├── apps/                    # Application definitions
+│   ├── environments/            # Environment-specific configurations
+│   │   ├── nonprod/             # Development/Testing environment
+│   │   └── prod/                # Production environment
+│   └── infra/                   # Infrastructure component definitions
+├── apps/                        # Individual application configurations
+│   ├── hello-world/             # Test application
+│   ├── home-assistant/          # Home automation platform
+│   └── unifi/                   # Ubiquiti UniFi controller
+├── clusters/                    # Cluster-specific configurations
+│   └── talos/                   # Talos Linux configurations
+└── infra/                       # Infrastructure components
+    ├── argocd/                  # GitOps operator
+    ├── cert-manager/            # SSL/TLS certificate management
+    ├── kube-prometheus-stack/   # Monitoring and alerting
+    ├── sealed-secrets/          # Encrypted secrets management
+    └── tailscale/               # VPN solution
 ```
 
 ## Infrastructure Components
 
 ### Core Infrastructure
-- **ArgoCD**: GitOps operator that manages all deployments
+
+- **ArgoCD**: GitOps manages all deployments
 - **Cert-Manager**: Handles SSL/TLS certificates automatically
 - **Kube-Prometheus-Stack**: Provides monitoring, alerting, and visualization
 - **Sealed-Secrets**: Encrypts Kubernetes secrets for secure storage
-- **Tailscale**: Provides secure VPN access to the cluster
+- **Tailscale**: Provides secure remote access to the cluster and apps
 
 ### Applications
+
 - **Home Assistant**: Home automation platform
 - **UniFi**: Network management for Ubiquiti devices
 - **Hello World**: Test application for deployment validation
@@ -43,38 +45,46 @@ This repository contains the GitOps configuration for a Kubernetes-based homelab
 ## Getting Started
 
 ### Prerequisites
+
 - Kubernetes cluster (running on Talos Linux)
 - `kubectl` configured to access your cluster
 - ArgoCD CLI installed
 
 ### Initial Setup
+
 1. Create the ArgoCD namespace:
+
    ```bash
    kubectl create namespace argocd
    ```
 
 2. Apply the ArgoCD configuration:
+
    ```bash
    kubectl apply --wait=true -n argocd -k infra/argocd/overlays/nonprod
    ```
 
 3. Get the ArgoCD admin password:
+
    ```bash
    kubectl get secret -n argocd argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
    ```
 
 4. Login to ArgoCD:
+
    ```bash
    argocd login <argocd-url>
    ```
 
 5. Add the repository to ArgoCD:
+
    ```bash
    argocd repocreds add ssh://git@github.com/ \
      --ssh-private-key-path <SSH_PRIVATE_KEY_PATH>
    ```
 
 6. Create the app-of-apps application:
+
    ```bash
    argocd app create app-of-apps \
      --dest-namespace argocd \
@@ -84,6 +94,7 @@ This repository contains the GitOps configuration for a Kubernetes-based homelab
    ```
 
 7. Sync the application:
+
    ```bash
    argocd app sync app-of-apps
    ```
@@ -91,6 +102,7 @@ This repository contains the GitOps configuration for a Kubernetes-based homelab
 ## Environment Management
 
 The repository supports multiple environments:
+
 - **nonprod**: Development and testing environment
 - **prod**: Production environment
 
@@ -106,6 +118,7 @@ Each environment can have its own configuration overlays while maintaining a com
 ## Monitoring
 
 The infrastructure includes comprehensive monitoring through:
+
 - Prometheus for metrics collection
 - Grafana for visualization
 - AlertManager for notifications
@@ -118,9 +131,11 @@ The infrastructure includes comprehensive monitoring through:
 4. Push to the branch
 5. Create a Pull Request
 
-## License
+## Notes
 
-[Add your license information here]
+### Extract manifests from helm chart
+
+For everthing but the CRD's:
 
 ```bash
 helmfile template . | \
@@ -133,6 +148,8 @@ cd helm && \
   kustomize create --autodetect && \
   cd ..
 ```
+
+For just the CRD's:
 
 ```bash
 helmfile template . --include-crds | \
