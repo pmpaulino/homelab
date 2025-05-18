@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: 'git@github.com:pmpaulino/homelab.git'
     targetRevision: main
-    path: 'apps/hello-world/base'
+    path: 'apps/hello-world/k8s/base'
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: hello-world
