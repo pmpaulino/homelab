@@ -1,5 +1,5 @@
 {
-  "name": "hello-dagger-fastapi-rye",
+  "name": "hello-world",
   "sdk": "python",
   "source": "dagger",
   "engineVersion": "v0.13.3"

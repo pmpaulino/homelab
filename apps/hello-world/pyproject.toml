@@ -1,7 +1,7 @@
 [project]
-name = "hello-dagger-fastapi-rye"
+name = "hello-world"
 version = "0.1.0"
-description = "Add your description here"
+description = "Hello World FastAPI app with Dagger"
 authors = [
     { name = "Patrick Paulino", email = "pmpaulino@gmail.com" }
 ]
@@ -9,7 +9,7 @@ dependencies = [
     "fastapi[standard]>=0.115.0",
 ]
 readme = "README.md"
-requires-python = ">= 3.8"
+requires-python = ">=3.12"
 
 [tool.rye]
 managed = true
@@ -17,3 +17,6 @@ virtual = true
 dev-dependencies = [
     "pytest>=8.3.3",
 ]
+
+[project.entry-points."dagger.mod"]
+main_object = "main:HelloWorld"

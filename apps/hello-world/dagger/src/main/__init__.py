@@ -21,14 +21,14 @@ if appropriate. All modules should have a short description.
 # For example, to import from src/main/main.py:
 # >>> from .main import HelloDaggerFastapiRye as HelloDaggerFastapiRye
 
+import random
+from typing import Optional
 import dagger
 from dagger import dag, function, object_type
 
-import random
-
 
 @object_type
-class HelloDaggerFastapiRye:
+class HelloWorld:
     async def build_dev(self, source: dagger.Directory) -> dagger.Container:
         """Build a ready-to-use development environment"""
         return (
@@ -40,12 +40,11 @@ class HelloDaggerFastapiRye:
             # change the working directory to /src
             .with_workdir("/src")
             # mount pip cache
-            .with_mounted_cache(
-                "/root/.cache/pip",
-                dag.cache_volume("pip-cache")
-            )
+            .with_mounted_cache("/root/.cache/pip", dag.cache_volume("pip-cache"))
             # install development dependencies
-            .with_exec(["pip", "install", "--no-cache-dir", "-r", "requirements-dev.lock"])
+            .with_exec(
+                ["pip", "install", "--no-cache-dir", "-r", "requirements-dev.lock"]
+            )
         )
 
     def build(self, source: dagger.Directory) -> dagger.Container:
@@ -98,7 +97,7 @@ class HelloDaggerFastapiRye:
     ) -> dagger.Directory:
         """
         Update the kustomization.yaml file with the new image URL
-        
+
         dagger call kustomize --directory_arg=. --image_name=image_name --image_tag=v0.0.1 export --path .
         """
 
@@ -126,7 +125,7 @@ class HelloDaggerFastapiRye:
     ) -> dagger.Directory:
         """
         Update the kustomization.yaml file with the new image URL
-        
+
         dagger call build-and-promote --directory_arg=. export --path k8s/
         """
 
@@ -138,3 +137,131 @@ class HelloDaggerFastapiRye:
 
         # Update the kustomization.yaml file with the new image URL
         return await self.kustomize(directory_arg, image_name, image_tag, env)
+
+    async def build_release_container(
+        self, source: dagger.Directory
+    ) -> dagger.Container:
+        """Build a container for running release-please commands"""
+        return (
+            dag.container()
+            .from_("node:20-slim")
+            .with_workdir("/app")
+            .with_directory(
+                "/app",
+                source,
+                include=[
+                    "release-please-config.json",
+                    ".release-please-manifest.json",
+                    "apps/*",
+                ],
+            )
+            .with_exec(["npm", "install", "-g", "release-please"])
+        )
+
+    @function
+    async def create_release_pr(
+        self,
+        source: dagger.Directory,
+        github_token: str,
+        repo_url: str = "https://github.com/pmpaulino/homelab",
+        dry_run: bool = False,
+        snapshot: bool = False,
+        release_as: Optional[str] = None,
+    ) -> str:
+        """Create a release PR using Release Please.
+
+        Args:
+            source: Source directory containing the repository
+            github_token: GitHub token for authentication
+            repo_url: GitHub repository URL
+            dry_run: If True, only show what would be done
+            snapshot: If True, create a snapshot release
+            release_as: Override the version to release as
+        """
+        container = await self.build_release_container(source)
+
+        # Build the release-please command
+        cmd = [
+            "release-please",
+            "release-pr",
+            f"--repo-url={repo_url}",
+            f"--token={github_token}",
+        ]
+
+        if dry_run:
+            cmd.append("--dry-run")
+        if snapshot:
+            cmd.append("--snapshot")
+        if release_as:
+            cmd.append(f"--release-as={release_as}")
+
+        # Run release-please
+        return await container.with_exec(cmd).stdout()
+
+    @function
+    async def create_github_release(
+        self,
+        source: dagger.Directory,
+        github_token: str,
+        repo_url: str = "https://github.com/pmpaulino/homelab",
+        release_as: Optional[str] = None,
+    ) -> str:
+        """Create a GitHub release using Release Please.
+
+        Args:
+            source: Source directory containing the repository
+            github_token: GitHub token for authentication
+            repo_url: GitHub repository URL
+            release_as: Override the version to release as
+        """
+        container = await self.build_release_container(source)
+
+        cmd = [
+            "release-please",
+            "github-release",
+            f"--repo-url={repo_url}",
+            f"--token={github_token}",
+        ]
+        if release_as:
+            cmd.append(f"--release-as={release_as}")
+
+        return await container.with_exec(cmd).stdout()
+
+    @function
+    async def build_and_push(
+        self,
+        source: dagger.Directory,
+        github_token: str,
+        registry: str = "ghcr.io",
+        image_name: str = "pmpaulino/hello-world",
+        tag: Optional[str] = None,
+    ) -> str:
+        """Build and push the container to GitHub Container Registry.
+        
+        Args:
+            source: Source directory containing the repository
+            github_token: GitHub Personal Access Token with write:packages scope
+            registry: Container registry URL (defaults to ghcr.io)
+            image_name: Name of the image to push (defaults to pmpaulino/hello-world)
+            tag: Optional tag for the image. If not provided, uses version from manifest
+        """
+        # Build the container
+        container = self.build(source)
+
+        # Get version from manifest if tag not provided
+        if not tag:
+            manifest = await source.file(".release-please-manifest.json").contents()
+            import json
+            manifest_data = json.loads(manifest)
+            tag = manifest_data.get("apps/hello-world", "latest")
+
+        # For GitHub Container Registry, username is the same as the image name owner
+        username = image_name.split("/")[0]
+
+        # Create a secret from the token
+        token_secret = dag.set_secret("github-token", github_token)
+
+        # Push to registry with authentication
+        return await container.with_registry_auth(registry, username, token_secret).publish(
+            f"{registry}/{image_name}:{tag}"
+        )
