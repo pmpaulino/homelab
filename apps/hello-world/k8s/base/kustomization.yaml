@@ -4,3 +4,7 @@ resources:
 - deployment.yaml
 - service.yaml
 - ingress.yaml
+images:
+- name: fastapi-app:latest
+  newName: ghcr.io/pmpaulino/hello-world
+  newTag: v0.1.0
