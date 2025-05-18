@@ -1,5 +1,5 @@
 resources:
-  # - ../../apps/hello-world/nonprod/
+  - ../../apps/hello-world/nonprod/
   # - ../../apps/unifi/nonprod/
   # - ../../apps/home-assistant/nonprod/
   # - ../../infra/cert-manager/base/
