@@ -47,10 +47,10 @@ class HelloWorld:
             )
         )
 
-    def build(self, source: dagger.Directory) -> dagger.Container:
+    def build(self, source: dagger.Directory, platform = dagger.Platform("linux/amd64")) -> dagger.Container:
         """Build a production image with only requirements.lock and app directory"""
         return (
-            dag.container()
+            dag.container(platform=platform)
             .from_("python:3.12-slim")
             .with_workdir("/")
             .with_file("/requirements.lock", source.file("requirements.lock"))
