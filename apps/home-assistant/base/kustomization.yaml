@@ -10,6 +10,13 @@ patches:
         kind: StatefulSet
         name: home-assistant
     patch: |-
+      # Configure host networking for device discovery
+      - op: add
+        path: /spec/template/spec/hostNetwork
+        value: true
+      - op: add
+        path: /spec/template/spec/dnsPolicy
+        value: ClusterFirstWithHostNet
       # Add the config volume
       - op: add
         path: /spec/template/spec/volumes/1
@@ -42,3 +49,11 @@ patches:
           name: home-assistant-config
           mountPath: /config/scenes.yaml
           subPath: scenes.yaml
+  - target:
+        kind: Service
+        name: home-assistant
+    patch: |-
+      # Update service to use NodePort for external access
+      - op: replace
+        path: /spec/type
+        value: NodePort

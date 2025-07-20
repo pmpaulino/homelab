@@ -22,6 +22,41 @@ data:
         - 192.168.0.0/16
         - 100.64.0.0/10
 
+    # Discovery configuration
+    discovery:
+      enable: true
+      ignore: []
+
+    # Network discovery settings
+    zeroconf:
+      default_interface: true
+      interfaces: []
+
+    # DHCP discovery
+    dhcp:
+      enable: true
+
+    # Network scanner for device discovery
+    network:
+      enable: true
+
+    # Enable common integrations for device discovery
+    homekit:
+      filter:
+        include_domains:
+          - light
+          - switch
+          - media_player
+          - climate
+          - sensor
+          - binary_sensor
+
+    # MQTT for device communication (commented out until broker is configured)
+    # mqtt:
+    #   broker: !secret mqtt_broker
+    #   discovery: true
+    #   discovery_prefix: homeassistant
+
     automation: !include automations.yaml
     script: !include scripts.yaml
     scene: !include scenes.yaml
