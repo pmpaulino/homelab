@@ -479,6 +479,7 @@ cluster:
                 exemptions:
                     namespaces:
                         - kube-system
+                        - home-assistant
                     runtimeClasses: []
                     usernames: []
                 kind: PodSecurityConfiguration
