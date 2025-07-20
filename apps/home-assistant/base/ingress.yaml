@@ -9,13 +9,13 @@ spec:
   - host: home-assistant
     http:
       paths:
-      - path: /
-        pathType: Prefix
-        backend:
+      - backend:
           service:
             name: home-assistant
             port:
               name: http
+        path: /
+        pathType: Prefix
   tls:
   - hosts:
     - home-assistant
