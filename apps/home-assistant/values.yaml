@@ -1,16 +1,45 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: home-assistant-config
-  namespace: home-assistant
-data:
-  configuration.yaml: |
+# Enable persistence for Home Assistant
+persistence:
+  enabled: true
+  accessMode: ReadWriteOnce
+  size: 10Gi
+  storageClass: "local-path"
+
+# Enable host networking for device discovery
+hostNetwork: true
+dnsPolicy: ClusterFirstWithHostNet
+
+# Service configuration
+service:
+  type: NodePort
+  port: 8080
+
+# Ingress configuration
+ingress:
+  enabled: true
+  className: "tailscale"
+  hosts:
+    - host: home-assistant
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - home-assistant
+
+# Configuration management
+configuration:
+  enabled: true
+  forceInit: false
+  trusted_proxies:
+    - 10.244.0.0/16
+    - 10.96.0.0/12
+    - 172.16.0.0/12
+    - 192.168.0.0/16
+    - 100.64.0.0/10
+  templateConfig: |-
     # Loads default set of integrations. Do not remove.
     default_config:
-
-    # Load frontend themes from the themes folder
-    frontend:
-      themes: !include_dir_merge_named themes
 
     # HTTP configuration for reverse proxy
     http:
@@ -57,9 +86,10 @@ data:
     #   discovery: true
     #   discovery_prefix: homeassistant
 
+    # Load frontend themes from the themes folder
+    frontend:
+      themes: !include_dir_merge_named themes
+
     automation: !include automations.yaml
     script: !include scripts.yaml
-    scene: !include scenes.yaml
-  automations.yaml: ""
-  scripts.yaml: ""
-  scenes.yaml: "" 
+    scene: !include scenes.yaml 

@@ -1,0 +1,29 @@
+---
+# Source: home-assistant/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: home-assistant
+  labels:
+    helm.sh/chart: home-assistant-0.2.116
+    app.kubernetes.io/name: home-assistant
+    app.kubernetes.io/instance: home-assistant
+    app.kubernetes.io/version: 2025.4.1
+    app.kubernetes.io/managed-by: Helm
+spec:
+  ingressClassName: tailscale
+  tls:
+    - hosts:
+        - home-assistant
+      secretName:
+  rules:
+    - host: home-assistant
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: home-assistant
+                port:
+                  number: 8080

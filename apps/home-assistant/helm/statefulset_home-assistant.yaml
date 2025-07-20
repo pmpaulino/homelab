@@ -23,7 +23,11 @@ spec:
         app.kubernetes.io/name: home-assistant
         app.kubernetes.io/instance: home-assistant
       annotations:
+        checksum/init-script: 490d99caab61d7092d315426ebaed17a827b88b2ad4e82ee1b568226ebb62b14
+        checksum/hass-configuration: 99cfd38f34ab4dcfb01d6aa956f52e191f6dc893f4c646e925c90f10bcc4c29c
     spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
       serviceAccountName: home-assistant
       securityContext: {}
       containers:
@@ -56,6 +60,38 @@ spec:
           volumeMounts:
             - mountPath: /config
               name: home-assistant
+      initContainers:
+        - name: setup-config
+          image: mikefarah/yq:4
+          securityContext:
+            runAsUser: 0
+          command:
+            - /bin/sh
+            - -c
+          args:
+            - /bin/sh /mnt/init/init.sh
+          volumeMounts:
+            - name: init-volume
+              mountPath: /mnt/init/init.sh
+              subPath: init.sh
+            - name: config-volume
+              mountPath: /config-templates
+            - mountPath: /config
+              name: home-assistant
       volumes:
-        - name: home-assistant
-          emptyDir: {}
+        - name: init-volume
+          configMap:
+            name: init-script
+        - name: config-volume
+          configMap:
+            name: hass-configuration
+  volumeClaimTemplates:
+    - metadata:
+        name: home-assistant
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10Gi
+        storageClassName: local-path

@@ -7,5 +7,5 @@ releases:
     namespace: home-assistant
     chart: pajikos/home-assistant
     version: v0.2.116
-    # values:
-    #   - values.yaml
+    values:
+      - values.yaml

@@ -1,0 +1,64 @@
+---
+# Source: home-assistant/templates/configmap-hass-config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hass-configuration
+  namespace: home-assistant
+data:
+  configuration.yaml: |
+    # Loads default set of integrations. Do not remove.
+    default_config:
+
+    # HTTP configuration for reverse proxy
+    http:
+      use_x_forwarded_for: true
+      trusted_proxies:
+        - 10.244.0.0/16
+        - 10.96.0.0/12
+        - 172.16.0.0/12
+        - 192.168.0.0/16
+        - 100.64.0.0/10
+
+    # Discovery configuration
+    discovery:
+      enable: true
+      ignore: []
+
+    # Network discovery settings
+    zeroconf:
+      default_interface: true
+      interfaces: []
+
+    # DHCP discovery
+    dhcp:
+      enable: true
+
+    # Network scanner for device discovery
+    network:
+      enable: true
+
+    # Enable common integrations for device discovery
+    homekit:
+      filter:
+        include_domains:
+          - light
+          - switch
+          - media_player
+          - climate
+          - sensor
+          - binary_sensor
+
+    # MQTT for device communication (commented out until broker is configured)
+    # mqtt:
+    #   broker: !secret mqtt_broker
+    #   discovery: true
+    #   discovery_prefix: homeassistant
+
+    # Load frontend themes from the themes folder
+    frontend:
+      themes: !include_dir_merge_named themes
+
+    automation: !include automations.yaml
+    script: !include scripts.yaml
+    scene: !include scenes.yaml
